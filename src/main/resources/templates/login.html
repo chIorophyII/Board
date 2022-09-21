@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>로그인</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script>
+        function reqLogin()
+        {
+            let username = $("#user_id").val();
+            let password = $("#user_pw").val();
+            let param = {"username" : username, "password" : password};
+
+            $.ajax({
+                type: "POST",
+                url: "<%= request.getContextPath() %>/user/login",
+                data: JSON.stringify(param),
+                dataType: "text",
+                contentType: "application/json; charset=utf-8",
+                success: function(data, textStatus, request) {
+                    console.log("로그인완료");
+                    $.cookie('token', request.getResponseHeader("Authorization"), {expires:1, path:'/'});
+                },
+                error: function() {
+                    console.log("로그인실패");
+                }
+            });
+        }
+
+
+    </script>
+</head>
+
+<body>
+<div class="main">
+    <h1 class="logo">로그인</h1>
+    <div class="container">
+        <input type="text" placeholder="ID" id="username" class="account">
+        <input type="password" placeholder="Password" id="password" class="account">
+        <button id="login" class="account" onclick="reqLogin()">login</button>
+        <p id="alert" class="account"> </p>
+    </div>
+</div>
+
+</body>
+</html>
