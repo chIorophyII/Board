@@ -84,17 +84,29 @@ public class UserService {
     // 로그인
     @Transactional
     public ResponseEntity<String> login(UserDto userDto) {
+        System.out.println("wa?");
         User foundUser = userRepository.findByUsername(userDto.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException(ILLEGAL_USER_NOT_EXIST));
+                .orElse(null);
+
+        if (foundUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ILLEGAL_USER_NOT_EXIST);
+        }
+
         if(!passwordEncoder.matches(userDto.getPassword(), foundUser.getPassword())) {
             throw new IllegalArgumentException(ILLEGAL_PASSWORD_NOT_VALID);
         }
 
-        String token = jwtTokenUtils.generateJwtToken(foundUser);
+        HttpHeaders headers = headerToken(foundUser);
+
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body("로그인 성공");
+    }
+
+    // 토큰을 헤더에 담음
+    public HttpHeaders headerToken(User user) {
+        String token = jwtTokenUtils.generateJwtToken(user);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + " " + token);
-
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body("로그인 성공");
+        return headers;
     }
 }

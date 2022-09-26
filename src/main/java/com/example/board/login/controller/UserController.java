@@ -1,5 +1,7 @@
 package com.example.board.login.controller;
 
+import com.example.board.exception.AdminValidGroup;
+import com.example.board.exception.UserValidGroup;
 import com.example.board.login.dto.UserDto;
 import com.example.board.login.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +34,16 @@ public class UserController {
     // 관리자
     @PostMapping("/signup")
     @ResponseBody
-    public ResponseEntity<String> adminSignup(@Validated @RequestBody UserDto userDto, BindingResult bindingResult) {
+    public ResponseEntity<String> adminSignup(
+            @Validated(AdminValidGroup.class) @RequestBody UserDto userDto, BindingResult bindingResult) {
         return userService.adminSignup(userDto, bindingResult);
     }
 
     // 관리자가 User 가입
     @PostMapping("/admin/signup")
     @ResponseBody
-    public ResponseEntity<String> userSignup(@Validated @RequestBody UserDto userDto, BindingResult bindingResult) {
+    public ResponseEntity<String> userSignup(
+            @Validated(UserValidGroup.class) @RequestBody UserDto userDto, BindingResult bindingResult) {
         return userService.userSignup(userDto, bindingResult);
     }
 
